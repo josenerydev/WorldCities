@@ -7,26 +7,24 @@ import {AppComponent} from './app.component';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {HomeComponent} from './home/home.component';
 import {NavMenuComponent} from './nav-menu/nav-menu.component';
-import {MatToolbarModule} from "@angular/material/toolbar";
-import {MatButtonModule} from "@angular/material/button";
-import {MatIconModule} from "@angular/material/icon";
 import {CitiesComponent} from './cities/cities.component';
+import {AngularMaterialModule} from "./angular-material.module";
+import { CountriesComponent } from './countries/countries.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,
     NavMenuComponent,
-    CitiesComponent
+    CitiesComponent,
+    CountriesComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
     BrowserAnimationsModule,
-    MatToolbarModule,
-    MatButtonModule,
-    MatIconModule
+    AngularMaterialModule
   ],
   providers: [],
   bootstrap: [AppComponent]
