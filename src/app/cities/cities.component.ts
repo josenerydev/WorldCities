@@ -1,11 +1,14 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
-import {HttpClient, HttpParams} from "@angular/common/http";
-import {environment} from "../../environments/environment";
-import {MatTableDataSource} from "@angular/material/table";
-import {MatPaginator, PageEvent} from "@angular/material/paginator";
-import {MatSort} from "@angular/material/sort";
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { HttpClient, HttpParams } from "@angular/common/http";
+import { environment } from "../../environments/environment";
+import { MatTableDataSource } from "@angular/material/table";
+import { MatPaginator, PageEvent } from "@angular/material/paginator";
+import { MatSort } from "@angular/material/sort";
 
-import {City} from "./city";
+import { Subject } from 'rxjs'
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+
+import { City } from "./city";
 
 @Component({
   selector: 'app-cities',
@@ -27,11 +30,25 @@ export class CitiesComponent implements OnInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
+  filterTextChanged: Subject<string> = new Subject<string>();
+
   constructor(private http: HttpClient) {
   }
 
   ngOnInit() {
     this.loadData(null);
+  }
+
+  // debounce filter text changes
+  onFilterTextChanged(filterText: string) {
+    if (this.filterTextChanged.observers.length === 0) {
+      this.filterTextChanged
+        .pipe(debounceTime(1000), distinctUntilChanged())
+        .subscribe(query => {
+          this.loadData(query);
+        });
+    }
+    this.filterTextChanged.next(filterText);
   }
 
   loadData(query?: string | null) {
@@ -60,7 +77,7 @@ export class CitiesComponent implements OnInit {
         .set("filterQuery", this.filterQuery);
     }
 
-    this.http.get<any>(url, {params})
+    this.http.get<any>(url, { params })
       .subscribe(result => {
         this.paginator.length = result.totalCount;
         this.paginator.pageIndex = result.pageIndex;
